@@ -1,0 +1,543 @@
+/* Commodities Tracker — Graphite Terminal
+ *
+ * Grayscale + one amber + the red/green semantic pair. Amber means exactly
+ * one thing anywhere in the app: "this is where you are" (active chip,
+ * ticked stream, selected option, the underlying-price row). Actions are
+ * bordered buttons; selections are amber underlines. Nothing else is
+ * colored for decoration.
+ *
+ * IBM Plex in three roles, self-hosted from assets/fonts/ — this app runs
+ * fully offline, so nothing is ever fetched from a CDN at runtime. Only the
+ * latin + latin-ext subsets are bundled. IBM Plex Sans is a variable font
+ * (one file covers weights 100-700); Mono and Condensed ship static cuts.
+ */
+
+@font-face {
+    font-family: 'IBM Plex Sans';
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: swap;
+    src: url('fonts/plex-sans-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'IBM Plex Sans';
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: swap;
+    src: url('fonts/plex-sans-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'IBM Plex Sans Condensed';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('fonts/plex-sans-cond-600-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'IBM Plex Sans Condensed';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('fonts/plex-sans-cond-600-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('fonts/plex-mono-400-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('fonts/plex-mono-400-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('fonts/plex-mono-600-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('fonts/plex-mono-600-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+    --color-bg: #0a0b0d;
+    --color-panel: #111316;
+    --color-border: #1e2126;
+    --color-text: #e8eaed;
+    --color-dim: #7d838c;
+    --color-gray: #565c66;
+    --color-amber: #e8a33d;
+    --color-up: #4cc38a;
+    --color-down: #e5484d;
+
+    --font-display: 'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif;
+    --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+    /*
+     * Dash's own built-in components (Dropdown, DatePicker*, Checklist, etc. —
+     * Dash 4.x) are entirely themed through this token set, referenced as
+     * var(--Dash-*) inside Dash's shipped component CSS. Overriding them here
+     * is the correct way to theme those components — targeting invented class
+     * names like .Select__control or .DateInput (react-select/react-dates
+     * conventions from older Dash versions) does nothing on this version.
+     * Interactive fills resolve to amber, so a ticked checkbox or a selected
+     * option speaks the same "you are here" language as an active chip.
+     */
+    --Dash-Spacing: 4px;
+    --Dash-Stroke-Strong: rgba(232, 234, 237, 0.16);
+    --Dash-Stroke-Weak: rgba(232, 234, 237, 0.08);
+    --Dash-Fill-Interactive-Strong: #e8a33d;
+    --Dash-Fill-Interactive-Weak: rgba(232, 163, 61, 0.14);
+    --Dash-Fill-Inverse-Strong: #111316;
+    --Dash-Text-Primary: #e8eaed;
+    --Dash-Text-Strong: #ffffff;
+    --Dash-Text-Weak: #7d838c;
+    --Dash-Text-Disabled: rgba(232, 234, 237, 0.32);
+    --Dash-Fill-Primary-Hover: rgba(255, 255, 255, 0.04);
+    --Dash-Fill-Primary-Active: rgba(255, 255, 255, 0.08);
+    --Dash-Fill-Disabled: rgba(255, 255, 255, 0.05);
+    --Dash-Shading-Strong: rgba(0, 0, 0, 0.55);
+    --Dash-Shading-Weak: rgba(0, 0, 0, 0.30);
+}
+
+/* Same --Dash-* overrides, at higher specificity than a bare :root selector,
+   so they win regardless of whether Dash's own default :root block happens to
+   be injected into <head> after this stylesheet at runtime. */
+html:root {
+    --Dash-Stroke-Strong: rgba(232, 234, 237, 0.16);
+    --Dash-Stroke-Weak: rgba(232, 234, 237, 0.08);
+    --Dash-Fill-Interactive-Strong: #e8a33d;
+    --Dash-Fill-Interactive-Weak: rgba(232, 163, 61, 0.14);
+    --Dash-Fill-Inverse-Strong: #111316;
+    --Dash-Text-Primary: #e8eaed;
+    --Dash-Text-Strong: #ffffff;
+    --Dash-Text-Weak: #7d838c;
+    --Dash-Text-Disabled: rgba(232, 234, 237, 0.32);
+    --Dash-Fill-Primary-Hover: rgba(255, 255, 255, 0.04);
+    --Dash-Fill-Primary-Active: rgba(255, 255, 255, 0.08);
+    --Dash-Fill-Disabled: rgba(255, 255, 255, 0.05);
+    --Dash-Shading-Strong: rgba(0, 0, 0, 0.55);
+    --Dash-Shading-Weak: rgba(0, 0, 0, 0.30);
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    margin: 0;
+    padding: 15px;
+}
+
+/* --- Masthead --- */
+.header-bar {
+    position: relative;
+    text-align: center;
+    background: var(--color-panel);
+    border-bottom: 1px solid var(--color-border);
+    padding: 12px 0;
+    margin: -15px -15px 14px -15px;
+}
+
+.header-bar h1 {
+    font-family: var(--font-display);
+    font-size: 1.4em;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin: 0;
+    display: inline-block;
+}
+
+/* Colophon mark: same display face as the masthead, held back to dim so the
+   title carries the line on its own. */
+.header-link {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-dim);
+    text-decoration: none;
+    padding-bottom: 3px;
+    transition: color 0.15s;
+}
+
+.header-link::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 0;
+    background: var(--color-amber);
+    transition: width 0.2s ease;
+}
+
+.header-link:hover {
+    color: var(--color-amber);
+}
+
+.header-link:hover::after {
+    width: 100%;
+}
+
+/* --- Builder ("Select") bar --- */
+.builder-section {
+    margin-bottom: 14px;
+}
+
+.builder-body {
+    background: var(--color-panel);
+    border: 1px solid var(--color-border);
+    border-top: none;
+    border-radius: 0 0 2px 2px;
+    padding: 10px 12px 4px 12px;
+}
+
+/* Buttons are actions, never selections: a hairline box, not an underline.
+   Addressed by id so the Refresh button (which reuses the .date-chip class)
+   never picks up the chip treatment. */
+#builder-toggle-btn,
+#refresh-btn {
+    background: var(--color-panel);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    font-family: var(--font-display);
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+#builder-toggle-btn:hover,
+#refresh-btn:hover {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+}
+
+#builder-toggle-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    text-align: left;
+    border-radius: 2px 2px 0 0;
+}
+
+#refresh-btn {
+    padding: 6px 14px;
+}
+
+/* --- Selector row: fixed 5-column grid, no wrap. Mutually-exclusive pairs
+   (asset <-> cross-asset; single <-> cross dates) are pinned to the same cell
+   and differ only by visibility, so nothing reflows on mode/view changes. --- */
+.control-row {
+    display: grid;
+    /* mode | asset/cross-asset | dates | view | expiry */
+    grid-template-columns:
+        minmax(120px, 0.8fr)
+        minmax(110px, 1.1fr)
+        minmax(260px, 1.3fr)
+        minmax(130px, 0.9fr)
+        minmax(110px, 0.7fr);
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+    overflow-x: auto;
+}
+
+.control-element {
+    width: 100%;
+    min-width: 0;
+}
+
+#mode-selector-wrapper        { grid-column: 1; grid-row: 1; }
+#asset-dropdown-wrapper       { grid-column: 2; grid-row: 1; }
+#cross-asset-selector-wrapper { grid-column: 2; grid-row: 1; }
+#single-date-wrapper          { grid-column: 3; grid-row: 1; }
+#cross-date-wrapper           { grid-column: 3; grid-row: 1; }
+#view-toggle-wrapper          { grid-column: 4; grid-row: 1; }
+#expiry-dropdown-wrapper      { grid-column: 5; grid-row: 1; }
+
+/* --- Refresh row: its own clean flex line below the selector row — the four
+   stream checkboxes, the Refresh button, and the status line never share
+   grid cells with the dropdowns. --- */
+.fetch-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-border);
+    margin-bottom: 8px;
+}
+
+.fetch-row .dash-checklist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+}
+
+.fetch-row label {
+    font-family: var(--font-mono);
+    font-size: 0.82em;
+    letter-spacing: 0.4px;
+    color: var(--color-dim);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+#refresh-status {
+    font-family: var(--font-mono);
+    font-size: 0.82em;
+    color: var(--color-dim);
+}
+
+/* Dropdown trigger box. Dash's own CSS gives .dash-dropdown a border via
+   --Dash-Stroke-Strong but no background (unlike .dash-datepicker, which does
+   set one) — without this it just shows whatever's behind it and blends into
+   the bar instead of reading as a distinct input. */
+.dash-dropdown {
+    background: var(--color-bg);
+    border-radius: 2px;
+    transition: border-color 0.15s;
+}
+.dash-dropdown:hover {
+    border-color: var(--color-amber) !important;
+}
+.dash-dropdown-trigger {
+    min-height: 30px;
+    font-family: var(--font-body);
+    cursor: pointer;
+}
+.dash-dropdown-content,
+.dash-dropdown-option {
+    font-family: var(--font-body);
+}
+.dash-dropdown-option:hover {
+    background: rgba(255, 255, 255, 0.04) !important;
+}
+/* The actual currently-selected option inside the open list — Dash gives it
+   no visual treatment at all (the radio/checkbox controlling it is hidden).
+   :has() targets the option row that contains the checked input directly.
+   An amber tint, not a solid fill: the one solid amber block in the app is
+   the options chain's underlying-price row. */
+.dash-dropdown-option:has(input:checked) {
+    background: rgba(232, 163, 61, 0.12) !important;
+    color: var(--color-amber) !important;
+}
+
+/* DatePicker sizing/typography (real classes: dash-datepicker-*; colors
+   come entirely from the --Dash-* tokens overridden in :root above) */
+.dash-datepicker-input {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+}
+
+.date-picker-inline {
+    flex: 1;
+}
+
+.tab-content {
+    padding: 16px;
+    background-color: var(--color-bg);
+}
+
+.asset-not-selected {
+    text-align: center;
+    padding: 48px;
+    color: var(--color-dim);
+    font-size: 1.05em;
+    font-family: var(--font-display);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.graph-container {
+    margin-bottom: 20px;
+    padding: 12px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+}
+
+/* --- Section rule: label first, hairline running out to the right --- */
+.ticker-rule {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+/* The builder's margin-bottom + .tab-content's padding already give the
+   leading rule breathing room — its own top margin on top of that was
+   stacking into a distinct blank gap above the content. */
+.sub-tab-content > .ticker-rule:first-child {
+    margin-top: 0;
+}
+
+.ticker-rule::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.ticker-rule-label {
+    font-family: var(--font-mono);
+    font-size: 0.72em;
+    font-weight: 400;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--color-dim);
+    white-space: nowrap;
+}
+
+/* --- Summary stat strip --- */
+.stats-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-bottom: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.stat-card {
+    flex: 1 1 160px;
+    background: var(--color-panel);
+    padding: 10px 14px;
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: relative;
+}
+
+.stat-card:last-child {
+    border-right: none;
+}
+
+.stat-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.stat-title {
+    font-family: var(--font-display);
+    font-size: 0.7em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--color-dim);
+}
+
+.stat-value {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.35em;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.stat-change {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.78em;
+    font-weight: 600;
+}
+
+.stat-change-positive {
+    color: var(--color-up);
+}
+
+.stat-change-negative {
+    color: var(--color-down);
+}
+
+/* Sub-tab content */
+.sub-tab-content {
+    padding: 0;
+}
+
+/* --- Chips: the app's one selection language ---
+   Flat mono text with an amber underline when active. Shared by the options
+   date chips, the strike-range chips, and the firm chips — selecting
+   anything, anywhere, looks the same. */
+.date-chip-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.date-chip-strip-empty {
+    text-align: center;
+    color: var(--color-dim);
+    font-size: 0.85em;
+    font-family: var(--font-mono);
+    margin-bottom: 18px;
+}
+
+.date-chip {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: var(--color-dim);
+    padding: 4px 2px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.85em;
+    font-weight: 400;
+    cursor: pointer;
+    transition: color 0.12s, border-color 0.12s;
+}
+
+.date-chip:hover {
+    color: var(--color-text);
+    border-bottom-color: var(--color-gray);
+}
+
+.date-chip-active {
+    color: var(--color-text);
+    border-bottom-color: var(--color-amber);
+    font-weight: 600;
+}
+
+.date-chip-active:hover {
+    color: var(--color-text);
+    border-bottom-color: var(--color-amber);
+}

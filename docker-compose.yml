@@ -1,0 +1,18 @@
+name: commodities-tracker
+
+services:
+  commodities:
+    build: .
+    ports:
+      # Loopback-only publish: invisible to the LAN and the internet — this is
+      # the app's actual access control. The in-container bind stays 0.0.0.0
+      # (required for Docker's bridge network to reach it).
+      - "127.0.0.1:8057:8057"
+    volumes:
+      - ./data:/app/data
+    environment:
+      # Free key from https://www.eia.gov/opendata/register.php — put
+      # EIA_API_KEY=... in the .env file next to this compose file.
+      # Used for CL/NG daily spot prices.
+      - EIA_API_KEY=${EIA_API_KEY:-}
+    restart: unless-stopped

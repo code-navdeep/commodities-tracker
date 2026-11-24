@@ -1,0 +1,18 @@
+CONTRACT: AUGUST 2026 COMEX 100 GOLD FUTURES
+SETTLEMENT: 4,340.700000000 USD
+INTENT DATE: 08/07/2026                    DELIVERY DATE: 08/11/2026
+
+FIRM ORG FIRM NAME                          ISSUED    STOPPED
+____________________________________________________________________
+118   H   MACQUARIE FUTURES US                             2
+332   H   STANDARD CHARTERED B                             8
+357   C   WEDBUSH SECURITIES                    1
+435   H   SCOTIA CAPITAL (USA)                160
+152   C   DORMAN TRADING, LLC                   9         11
+555   C   BNP PARIBAS SEC CORP                115
+661   C   JP MORGAN SECURITIES                           265
+905   C   ADM                                   1
+____________________________________________________________________
+
+                       TOTAL:               286        286
+                MONTH TO DATE:                        15,416

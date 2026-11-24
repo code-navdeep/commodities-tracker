@@ -1,0 +1,21 @@
+{
+  "id": "250923088691C",
+  "report_date_as_yyyy_mm_dd": "2025-09-23T00:00:00.000",
+  "market_and_exchange_names": "GOLD - COMMODITY EXCHANGE INC.",
+  "contract_market_name": "GOLD",
+  "cftc_contract_market_code": "088691",
+  "open_interest_all": "898447",
+  "prod_merc_positions_long": "38666",
+  "prod_merc_positions_short": "95508",
+  "swap_positions_long_all": "42028",
+  "swap__positions_short_all": "276247",
+  "swap__positions_spread_all": "97855",
+  "m_money_positions_long_all": "192350",
+  "m_money_positions_short_all": "33734",
+  "m_money_positions_spread": "89092",
+  "other_rept_positions_long": "127422",
+  "other_rept_positions_short": "26778",
+  "other_rept_positions_spread": "242301",
+  "nonrept_positions_long_all": "68734",
+  "nonrept_positions_short_all": "36933"
+}

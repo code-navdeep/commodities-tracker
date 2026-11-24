@@ -1,0 +1,17 @@
+# Secrets — EIA_API_KEY lives here
+.env
+
+# The store: generated on first boot, mounted as a Docker volume
+data/
+*.db-wal
+*.db-shm
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+venv/
+
+# macOS
+.DS_Store
